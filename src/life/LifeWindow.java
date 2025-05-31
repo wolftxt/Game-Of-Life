@@ -5,6 +5,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -16,7 +23,7 @@ import javax.swing.SpinnerNumberModel;
 public class LifeWindow extends javax.swing.JFrame {
 
     private static final String HELPMESSAGE = "Use the slider to modify the speed. Minimal speed will stop the game.\nKeybinds:\nh - show help (this message)\nc - clear all life\nnumbers - move slider to certain percentages\nl - load interesting patterns\ns - save pattern\nr - fill the board with cells randomly\nd - set different dimensions";
-    private static final String PATTERNDIRECTORY = "patterns/";
+    private static final String PATTERNDIRECTORY = "/patterns/";
 
     public LifeWindow() {
         initComponents();
@@ -26,9 +33,21 @@ public class LifeWindow extends javax.swing.JFrame {
             }
         });
         try {
-            lifeWidget1.setBoard(PatternsIO.load(PATTERNDIRECTORY + "help"));
-        } catch (IOException|ClassNotFoundException ex) {
-            JOptionPane.showMessageDialog(null, "The patterns/help file is missing, you probably deleted it (ノಠ益ಠ)ノ", "Something went wrong", JOptionPane.ERROR_MESSAGE);
+            lifeWidget1.setBoard(PatternsIO.load(getPatternsDirectory() + "help"));
+        } catch (IOException | ClassNotFoundException ex) {
+            try {
+                URL url = new URL("https://github.com/wolftxt/Game-Of-Life/raw/refs/heads/master/patterns/help");
+                InputStream in = url.openStream();
+                File out = new File(getPatternsDirectory(), "help");
+                if (!out.exists()) {
+                    out.mkdirs();
+                }
+                Files.copy(in, out.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                lifeWidget1.setBoard(PatternsIO.load(getPatternsDirectory() + "help"));
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "The patterns/help file is missing, you probably deleted it (ノಠ益ಠ)ノ", "Something went wrong", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -36,8 +55,13 @@ public class LifeWindow extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, HELPMESSAGE, "Welcome to Conway's Game of Life", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    private String getPatternsDirectory() {
+        File codeDirectory = new File(LifeWindow.class.getProtectionDomain().getCodeSource().getLocation().getFile());
+        return codeDirectory.getParent() + PATTERNDIRECTORY;
+    }
+
     private void showCoolPatterns() {
-        File folder = new File(PATTERNDIRECTORY);
+        File folder = new File(getPatternsDirectory());
         String[] options = folder.list();
         JComboBox<String> comboBox = new JComboBox<>(options);
         JPanel panel = new JPanel();
@@ -47,9 +71,9 @@ public class LifeWindow extends javax.swing.JFrame {
         int result = JOptionPane.showConfirmDialog(null, panel, "Choose an Option", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             try {
-                lifeWidget1.setBoard(PatternsIO.load(PATTERNDIRECTORY + comboBox.getSelectedItem()));
+                lifeWidget1.setBoard(PatternsIO.load(folder.getAbsolutePath() + comboBox.getSelectedItem()));
             } catch (IOException | ClassNotFoundException e) {
-                JOptionPane.showMessageDialog(null, "Unable to load pattern", "Something went wrong", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Unable to load pattern", "Something went wrong", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -62,7 +86,7 @@ public class LifeWindow extends javax.swing.JFrame {
 
         int result = JOptionPane.showConfirmDialog(null, panel, "Save Pattern", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (result == JOptionPane.OK_OPTION && input.getText().length() >= 3) {
-            if (PatternsIO.save(lifeWidget1.getBoard(), PATTERNDIRECTORY + input.getText())) {
+            if (PatternsIO.save(lifeWidget1.getBoard(), getPatternsDirectory() + input.getText())) {
                 JOptionPane.showMessageDialog(null, "Unable to save pattern", "Something went wrong", JOptionPane.ERROR_MESSAGE);
             }
         }
