@@ -36,7 +36,7 @@ public class LifeWindow extends javax.swing.JFrame {
             lifeWidget1.setBoard(PatternsIO.load(getPatternsDirectory() + "help"));
         } catch (IOException | ClassNotFoundException ex) {
             try {
-                URL url = new URL("https://github.com/wolftxt/Game-Of-Life/raw/refs/heads/master/patterns/help");
+                URL url = new URL("https://github.com/wolftxt/Game-Of-Life/raw/refs/heads/master/src/life/patterns/help");
                 InputStream in = url.openStream();
                 File out = new File(getPatternsDirectory(), "help");
                 if (!out.exists()) {
