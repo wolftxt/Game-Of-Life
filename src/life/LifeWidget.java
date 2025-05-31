@@ -55,6 +55,7 @@ public class LifeWidget extends JComponent {
             int y = r.nextInt(board[0].length);
             board[x][y] = true;
         }
+        this.repaint();
     }
 
     public void clearLife() {
