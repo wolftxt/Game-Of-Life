@@ -5,6 +5,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,7 +27,8 @@ public class LifeWindow extends javax.swing.JFrame {
         });
         try {
             lifeWidget1.setBoard(PatternsIO.load("help"));
-        } catch (IOException | ClassNotFoundException ex) {
+        } catch (IOException | ClassNotFoundException | URISyntaxException ex) {
+            ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "The patterns/help file is missing, you probably deleted it (ノಠ益ಠ)ノ", "Something went wrong", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -46,9 +48,10 @@ public class LifeWindow extends javax.swing.JFrame {
         int result = JOptionPane.showConfirmDialog(null, panel, "Choose an Option", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             try {
-                lifeWidget1.setBoard(PatternsIO.load(new File(folder, (String) comboBox.getSelectedItem()).getAbsolutePath()));
-            } catch (IOException | ClassNotFoundException ex) {
-                JOptionPane.showMessageDialog(this, "The patterns/help file is missing, you probably deleted it (ノಠ益ಠ)ノ", "Something went wrong", JOptionPane.ERROR_MESSAGE);
+                lifeWidget1.setBoard(PatternsIO.load((String) comboBox.getSelectedItem()));
+            } catch (IOException | ClassNotFoundException | URISyntaxException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "The patterns/" + comboBox.getSelectedItem() + " file is missing, you probably deleted it (ノಠ益ಠ)ノ", "Something went wrong", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
