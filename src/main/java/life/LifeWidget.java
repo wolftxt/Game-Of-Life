@@ -58,7 +58,7 @@ public class LifeWidget extends JComponent {
         this.repaint();
     }
 
-    public void clearLife() {
+    public synchronized void clearLife() {
         board = new boolean[board.length][board[0].length];
         this.repaint();
     }
@@ -87,7 +87,7 @@ public class LifeWidget extends JComponent {
         thread.start();
     }
 
-    public void gameOfLife() {
+    public synchronized void gameOfLife() {
         int[][] neighborCount = new int[board.length][board[0].length];
         for (int x = 0; x < board.length; x++) {
             for (int y = 0; y < board[0].length; y++) {
