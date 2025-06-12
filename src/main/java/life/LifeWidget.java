@@ -69,21 +69,17 @@ public class LifeWidget extends JComponent {
     }
 
     private void gameCycle() {
-        thread = new Thread() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(cycleTime);
-                    } catch (InterruptedException ex) {
-                        continue;
-                    }
-                    gameOfLife();
-                    LifeWidget.this.repaint();
+        thread = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(cycleTime);
+                } catch (InterruptedException ex) {
+                    continue;
                 }
-
+                gameOfLife();
+                LifeWidget.this.repaint();
             }
-        };
+        });
         thread.start();
     }
 
