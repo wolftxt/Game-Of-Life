@@ -2,6 +2,7 @@ package life;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Arrays;
 import java.util.Random;
 import javax.swing.JComponent;
 
@@ -15,11 +16,13 @@ public class LifeWidget extends JComponent {
     private int xOffset;
 
     private volatile boolean[][] board;
+    private boolean[][] changed; // Used for drag and drop
     private long cycleTime;
     private Thread thread;
 
     public LifeWidget() {
         this.board = new boolean[50][50];
+        this.changed = new boolean[50][50];
         this.cycleTime = Long.MAX_VALUE;
         gameCycle();
     }
@@ -30,21 +33,31 @@ public class LifeWidget extends JComponent {
 
     public void setBoard(boolean[][] board) {
         this.board = board;
+        this.changed = new boolean[board.length][board[0].length];
         this.repaint();
     }
 
     public void setBoard(int width, int height) {
         this.board = new boolean[width][height];
+        this.changed = new boolean[width][height];
         this.repaint();
+    }
+
+    public void clearChanged() {
+        for (int i = 0; i < changed.length; i++) {
+            Arrays.fill(changed[i], false);
+        }
     }
 
     public void changeCell(int x, int y) {
         x = (x - xOffset) / s;
         y /= s;
-        if (!outOfBounds(x, y)) {
-            board[x][y] = !board[x][y];
-            this.repaint();
+        if (outOfBounds(x, y) || changed[x][y]) {
+            return;
         }
+        board[x][y] = !board[x][y];
+        changed[x][y] = true;
+        this.repaint();
     }
 
     public void generateRandomCells(int percentage) {

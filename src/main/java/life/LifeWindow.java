@@ -103,7 +103,15 @@ public class LifeWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        lifeWidget1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                lifeWidget1MouseDragged(evt);
+            }
+        });
         lifeWidget1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lifeWidget1MousePressed(evt);
+            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 lifeWidget1MouseReleased(evt);
             }
@@ -156,6 +164,7 @@ public class LifeWindow extends javax.swing.JFrame {
 
     private void lifeWidget1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lifeWidget1MouseReleased
         lifeWidget1.changeCell(evt.getX(), evt.getY());
+        lifeWidget1.clearChanged();
     }//GEN-LAST:event_lifeWidget1MouseReleased
 
     private void lifeWidget1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_lifeWidget1KeyPressed
@@ -188,6 +197,14 @@ public class LifeWindow extends javax.swing.JFrame {
     private void jSlider1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jSlider1KeyPressed
         lifeWidget1KeyPressed(evt);
     }//GEN-LAST:event_jSlider1KeyPressed
+
+    private void lifeWidget1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lifeWidget1MousePressed
+        lifeWidget1.changeCell(evt.getX(), evt.getY());
+    }//GEN-LAST:event_lifeWidget1MousePressed
+
+    private void lifeWidget1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lifeWidget1MouseDragged
+        lifeWidget1.changeCell(evt.getX(), evt.getY());
+    }//GEN-LAST:event_lifeWidget1MouseDragged
 
     public static void main(String args[]) {
         FlatDarkLaf.setup();
